@@ -15,7 +15,7 @@ setup(
     zip_safe=True,
     maintainer='gowtham',
     maintainer_email='gowthame8me177@gmail.com',
-    description='TODO: Package description',
+    description='ROS2 Package estimates velocity using imu and depth data',
     license='Apache-2.0',
     extras_require={
         'test': [
