@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-A ROS2 package for fusing IMU and depth sensor data to estimate vertical velocity and publish it as a ROS2 topic at 200Hz.
+A ROS2 package for fusing IMU and depth sensor data to estimate vertical velocity and publishes at 200Hz.
 
 ---
 
@@ -20,7 +20,7 @@ A ROS2 package for fusing IMU and depth sensor data to estimate vertical velocit
 # 2 System Requirements
 
 - ROS2 Humble Hawksbill
-- Python 3.10
+- Python
 - `sensor_msgs`, `std_msgs`
 - `colcon` build system
 
@@ -68,26 +68,41 @@ Docker build creates a new Docker image from the Dockerfile in the current direc
 sudo docker build -t sensor_fusion_pkg_img .
 ```
 
-### c) Run the Docker Container
+### c) Run the Built Docker Container
 
 docker run starts a new container from the image.
 
 ```bash
 sudo docker run -it --name sensor_fusion_container sensor_fusion_pkg_img
 ```
-### 5) To stop the container
+### d) Enter the Running Container( opens new terminal )
+
+```bash
+sudo docker exec -it sensor_fusion_container bash 
+```
+### e) To stop and exit a container
+
+```bash
+exit
+```
+### f) To check all running and stopped containes
+
+```bash
+sudo docker ps -a
+```
+### g) To stop the our container (FROM HOST)
 
 ```bash
 sudo docker stop sensor_fusion_container
 ```
 ---
 
-# Launch the sensor fusion node using Launch file
+# 4 Launch the sensor fusion node using Launch file
 
 ```bash
 ros2 launch sensor_fusion_pkg fuse_data.launch.py
 ```
-# Publish `/imu/data` data at 200 Hz
+# Publish IMU data to`/imu/data` topic at 200 Hz
 
 The IMU measures proper acceleration which includes gravity. assuming the sensor’s +Z axis points upward a stationary IMU reads approximately +9.81 m/s² on the Z-axis.
 
@@ -110,7 +125,7 @@ orientation:
   z: 0.0
   w: 1.0" -r 200
 ```
-# Publish `/depth` at 20 Hz
+# Publish Depth data to`/depth` topic at 20 Hz
 ```bash
 ros2 topic pub /depth std_msgs/msg/Float32 "{data: 2.5}" -r 200
 ```
@@ -118,8 +133,3 @@ ros2 topic pub /depth std_msgs/msg/Float32 "{data: 2.5}" -r 200
 ```bash
 ros2 topic echo /vertical_velocity
 ```
-
-
-
-
-
