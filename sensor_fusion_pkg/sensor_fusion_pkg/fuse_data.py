@@ -15,6 +15,8 @@ class Sensor_Fusion_Node(Node):
         # Publisher for vertical velocity
         self.velocity_publisher = self.create_publisher(Float32,'/vertical_velocity',10)
 
+        self.timer = self.create_timer(0.005, self.timer_callback)
+        
         # Initialize variables to store last depth and time
         self.prev_depth = None
         self.prev_depth_time = None
@@ -31,8 +33,9 @@ class Sensor_Fusion_Node(Node):
     def imu_callback(self, msg):
 
         #extract vertical acceleration from IMU data
-        acc_z = msg.linear_acceleration.z
-        # Get current time
+        acc_z = msg.linear_acceleration.z - 9.81  # Subtract gravity
+
+        # Get current time, """USING SYSTEM TIME for simplicity not message timestamps"""
         current_imu_time = time.time()
 
         # Integrate acceleration to estimate vertical velocity       
@@ -41,9 +44,6 @@ class Sensor_Fusion_Node(Node):
             self.vertical_vel_imu += acc_z * dt    
             
         self.prev_imu_time = current_imu_time
-
-        # Publish fused vertical velocity
-        self.publish_fused_velocity()
 
         # self.get_logger().info(f'Received IMU data: {msg}')
 
@@ -58,16 +58,13 @@ class Sensor_Fusion_Node(Node):
             dt = t - self.prev_depth_time
             self.vertical_vel_depth = (current_depth - self.prev_depth)/ dt
 
-                   
         self.prev_depth_time = t
         self.prev_depth = current_depth
 
-        # Publish fused vertical velocity   
-        self.publish_fused_velocity()
 
         # self.get_logger().info(f'Received Depth data: {msg}')
 
-    def publish_fused_velocity(self):
+    def timer_callback(self):
         # Simple average fusion of both velocity estimates
         fused_velocity = Float32()
 
@@ -77,7 +74,7 @@ class Sensor_Fusion_Node(Node):
         # Publish the fused vertical velocity
         self.velocity_publisher.publish(fused_velocity)
 
-        self.get_logger().info(f'Published Fused Vertical Velocity: {fused_velocity.data}')
+        self.get_logger().info(f'Published Fused Vertical Velocity at 200 Hz: {fused_velocity.data}')
 
 
 def main(args=None):
