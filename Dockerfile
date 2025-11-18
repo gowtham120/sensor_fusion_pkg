@@ -22,8 +22,8 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 RUN echo "source /oo_ws/install/setup.bash" >> ~/.bashrc
 
-
-ENTRYPOINT ["/bin/bash"]
+# to overide
+CMD ["bash"]
 
 
 
