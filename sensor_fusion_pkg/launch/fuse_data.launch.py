@@ -5,7 +5,7 @@ def generate_launch_description():
     return LaunchDescription([
         Node(
             package='sensor_fusion_pkg',
-            executable='fused_data',
+            executable='fuse_data',
             name='fused_data'
         )
     ])
