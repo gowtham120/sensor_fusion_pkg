@@ -4,6 +4,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Float32
 
+"""A ROS2 package for fusing IMU and depth sensor data to estimate vertical velocity and publish it as a ROS2 topic at 200Hz."""
 
 class Sensor_Fusion_Node(Node):
     def __init__(self):
@@ -60,7 +61,6 @@ class Sensor_Fusion_Node(Node):
 
         self.prev_depth_time = t
         self.prev_depth = current_depth
-
 
         # self.get_logger().info(f'Received Depth data: {msg}')
 
