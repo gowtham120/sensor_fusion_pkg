@@ -26,9 +26,9 @@ A ROS2 package for fusing IMU and depth sensor data to estimate vertical velocit
 
 ---
 
-# 3-a Source Installation Setup
+# 3 Source Installation Setup
 
-Clone the package into your ROS2 workspace:
+## Clone the package into your ROS2 workspace:
 
 ```bash
 cd ~/oo_ws/src
@@ -37,7 +37,8 @@ cd ~/oo_ws
 colcon build --symlink-install
 source install/setup.bash
 ```
-# 3-b Docker Setup
+
+# 4 Docker Setup
 
 This guide explains how to run the ROS2 `sensor_fusion_pkg` inside a Docker container.
 
@@ -68,49 +69,28 @@ Docker build creates a new Docker image from the Dockerfile in the current direc
 sudo docker build -t sensor_fusion_pkg_img .
 ```
 
-### c) Run the Built Docker Container
-
-docker run starts a new container from the image.
+### c) Create and Start the Docker Container
 
 ```bash
 sudo docker run -it --name sensor_fusion_container sensor_fusion_pkg_img
 ```
-### d) Enter the Running Container( opens new terminal )
 
-```bash
-sudo docker exec -it sensor_fusion_container bash 
-```
-### e) To stop and exit a container
-
-```bash
-exit
-```
-### f) To check all running and stopped containes
-
-```bash
-sudo docker ps -a
-```
-### g) To stop the our container (FROM HOST)
-
-```bash
-sudo docker stop sensor_fusion_container
-```
 ---
 
-# 4 Launch the sensor fusion node using Launch file
+# 4 Launching the sensor fusion node using Launch file
 
 ```bash
 ros2 launch sensor_fusion_pkg fuse_data.launch.py
 ```
-# Publish IMU data to`/imu/data` topic at 200 Hz
+## Publish IMU data to`/imu/data` topic at 200 Hz
 
 The IMU measures proper acceleration which includes gravity. assuming the sensor’s +Z axis points upward a stationary IMU reads approximately +9.81 m/s² on the Z-axis.
 
-To Experience change velocty pub above or below +9.8 m/s²
+##### To Experience change velocity, publish above or below +9.8 m/s²
 ```bash
-ros2 topic pub /imu_data sensor_msgs/msg/Imu "header:
+ros2 topic pub /imu/data sensor_msgs/msg/Imu "header:
   stamp: now
-  frame_id: 'base_link'
+  frame_id: 'imu_link'
 linear_acceleration:
   x: 0.0
   y: 0.0
@@ -125,11 +105,44 @@ orientation:
   z: 0.0
   w: 1.0" -r 200
 ```
-# Publish Depth data to`/depth` topic at 20 Hz
+#### For Docker setup (Run inside bash)
+##### To enter bash inside the running container
+```bash
+sudo docker exec -it sensor_fusion_container bash
+```
+
+## Publish Depth data to`/depth` topic at 20 Hz
+#### For Docker setup (Run inside bash)
+
 ```bash
 ros2 topic pub /depth std_msgs/msg/Float32 "{data: 2.5}" -r 200
 ```
-# To view fused velocity echo `/vertical_velocity`
+
+## To view fused velocity echo `/vertical_velocity`
 ```bash
 ros2 topic echo /vertical_velocity
+```
+
+
+
+
+
+
+----------------------------------------------
+
+
+###  To Exit
+
+```bash
+exit
+```
+###  To check all running and stopped containes
+
+```bash
+sudo docker ps -a
+```
+### To stop the our container
+
+```bash
+sudo docker stop sensor_fusion_container
 ```
